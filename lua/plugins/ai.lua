@@ -8,35 +8,38 @@ return {
     cmd = { "CodeCompanion", "CodeCompanionChat", "CodeCompanionActions" },
 
     opts = {
-      -- ここが重要（v18系の正しい指定）
-      interactions = {
+      -- Claude (Anthropic) を使用
+      strategies = {
         chat = {
-          adapter = {
-            name = "gemini",
-            model = "gemini-2.5-flash",
-          },
+          adapter = "anthropic",
+        },
+        inline = {
+          adapter = "anthropic",
         },
       },
 
-      -- ログ見たいとき（あとで消してOK）
-      opts = {
-        log_level = "DEBUG",
-      },
-
-      -- GEMINI_API_KEY を読ませる（デフォルトでも拾うことが多いけど明示しておく）
+      -- Anthropic adapter の設定
       adapters = {
-        http = {
-          gemini = function()
-            return require("codecompanion.adapters").extend("gemini", {
-              env = { api_key = vim.env.GEMINI_API_KEY },
-            })
-          end,
-        },
+        anthropic = function()
+          return require("codecompanion.adapters").extend("anthropic", {
+            env = {
+              api_key = "ANTHROPIC_API_KEY",
+            },
+            schema = {
+              model = {
+                default = "claude-sonnet-4-20250514",
+              },
+            },
+          })
+        end,
       },
+
+      -- ログ設定（問題があるときに確認用）
+      log_level = "INFO",
     },
 
     keys = {
-      { "<leader>an", "<cmd>CodeCompanionChat<cr>", desc = "CodeCompanion: New chat" },
+      { "<leader>an", "<cmd>CodeCompanionChat<cr>", desc = "CodeCompanion: Claude chat" },
     },
   },
 }
